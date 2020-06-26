@@ -30,7 +30,7 @@ setup(
     author_email='maxime.heliotpro@example.com',
     classifiers=[
         'Development Status :: 3 - Alpha',
-        'Intended Audience :: League of Legends players and Discord users',
+        "Intended Audience :: Customer Service",
         'Topic :: Software Development :: Build Tools',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3.8',
