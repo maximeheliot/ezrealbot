@@ -19,7 +19,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='ezrealbot',  # Required
-    version='1.0a1',  # Required
+    version='1.0a2',  # Required
     description='A Discord bot project over the League of Legends thematics.',
     long_description='Through different commands users will call the bot for displaying some simple statistics, '
                      'funny facts, quotes from the game, etc. '
