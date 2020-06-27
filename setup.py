@@ -45,6 +45,6 @@ setup(
     project_urls={  # Optional
         'Bug Reports': 'https://github.com/maximeheliot/ezrealbot/issues',
         'Funding': 'https://donate.pypi.org',
-        'Source': 'https://github.com/pypa/ezrealbot/',
+        'Source': 'https://github.com/maximeheliot/ezrealbot',
     },
 )
