@@ -1,13 +1,9 @@
+import discord
+import requests
+
 from ezrealbot.commands.base_command import BaseCommand
-from utils import get_emoji
-from random import randint
 
 
-# Your friendly example event
-# Keep in mind that the command name will be derived from the class name
-# but in lowercase
-
-# So, a command class named Random will generate a 'random' command
 class Version(BaseCommand):
     """
         **Return the lastest application version number and a list of the latest features it includes.**
@@ -23,38 +19,25 @@ class Version(BaseCommand):
     """
 
     def __init__(self):
-        # A quick description for the help message
         description = "Display the lastest application version number and a *what's new* list of information"
-        # A list of parameters that the command will take as input
-        # Parameters will be separated by spaces and fed to the 'params'
-        # argument in the handle() method
-        # If no params are expected, leave this list empty or set it to None
         params = None
         super().__init__(description, params)
 
-    # Override the handle() method
-    # It will be called every time the command is received
     async def handle(self, params, message, client):
-        # 'params' is a list that contains the parameters that the command
-        # expects to receive, t is guaranteed to have AT LEAST as many
-        # parameters as specified in __init__
-        # 'message' is the discord.py Message object for the command to handle
-        # 'client' is the bot Client object
+        r = None
 
         try:
-            lower_bound = int(params[0])
-            upper_bound = int(params[1])
-        except ValueError:
-            await client.send_message(message.channel,
-                                      "Please, provide valid numbers")
+            r = requests.get('https://api.github.com/repos/maximeheliot/ezrealbot/releases/latest').json()
+        except ConnectionError as err:
+            await message.channel.send("ConnectionError: ", err)
+            return
+        except requests.HTTPError as err:
+            await message.channel.send("HTTPError: ", err)
+            return
+        except requests.Timeout as err:
+            await message.channel.send("Timeout: ", err)
             return
 
-        if lower_bound > upper_bound:
-            await client.send_message(message.channel,
-                        "The lower bound can't be higher than the upper bound")
-            return
+        embed = discord.Embed(title="**Ezreal Version " + r['tag_name'] + " **", color=0xff0000, description=r['body'])
 
-        rolled = randint(lower_bound, upper_bound)
-        msg = get_emoji(":game_die:") + f" You rolled {rolled}!"
-
-        await message.channel.send(msg)
+        await message.channel.send(embed=embed)
