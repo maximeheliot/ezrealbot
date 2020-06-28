@@ -6,7 +6,7 @@ from discord.ext import commands
 
 from ezrealbot import settings
 from ezrealbot.events import BaseEvent
-from ezrealbot.utils import get_session, message_handler
+from ezrealbot.utils import get_session
 
 # Set to remember if the bot is already running, since on_ready may be called
 # more than once on reconnects
@@ -26,7 +26,10 @@ class EzrealBot(commands.Bot):
         super().__init__(settings.COMMAND_PREFIX)
         self.discord_token = settings.BOT_TOKEN
 
+        self.remove_command('help')
         self.ezreal_session = get_session()
+        from ezrealbot.cogs.base_cog import BaseCog
+        self.add_cog(BaseCog(self))
 
     def run(self, *args, **kwargs):
         super().run(self.discord_token, *args, **kwargs)
@@ -57,27 +60,3 @@ class EzrealBot(commands.Bot):
             n_ev += 1
         sched.start()
         print(f"{n_ev} events loaded", flush=True)
-
-    # The message handler for both new message and edits
-    async def common_handle_message(self, message):
-        text = message.content
-        if text.startswith(settings.COMMAND_PREFIX) and text != settings.COMMAND_PREFIX:
-            cmd_split = text[len(settings.COMMAND_PREFIX):].split()
-            try:
-                await message_handler.handle_command(self, cmd_split[0].lower(), cmd_split[1:], message)
-            except Exception as e:
-                print("Error while handling message", flush=True)
-                raise
-
-    async def on_message(self, message):
-        await self.common_handle_message(message)
-
-    async def on_message_edit(self, before, after):
-        await self.common_handle_message(after)
-
-    async def on_command_error(self, ctx, error):
-        # User-facing error
-        await ctx.send('`Error: {}`'
-                       '\nUse `!help` for commands help. Contact <@124633440078266368> for bugs.'.format(error),
-                       delete_after=self.warning_duration)
-        raise error

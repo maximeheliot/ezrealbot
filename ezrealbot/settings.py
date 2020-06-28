@@ -2,7 +2,7 @@ import os
 
 from ezrealbot.utils import get_discord_token
 
-# The prefix that will be used to parse commands.
+# The prefix that will be used to parse cogs.
 # It doesn't have to be a single character!
 COMMAND_PREFIX = "ez!"
 
