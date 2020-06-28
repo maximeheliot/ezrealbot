@@ -1,7 +1,7 @@
 # This, in addition to tweaking __all__ on commands/__init__.py,
 # imports all classes inside the commands package.
 
-import settings
+from ezrealbot import settings
 from ezrealbot.commands import BaseCommand
 
 
