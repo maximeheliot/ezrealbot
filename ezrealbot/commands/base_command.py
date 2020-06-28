@@ -1,4 +1,4 @@
-import settings
+from ezrealbot import settings
 
 
 # Base command class

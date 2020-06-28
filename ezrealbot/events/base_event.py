@@ -1,3 +1,5 @@
+
+
 # Base event class
 # Do not modify!
 class BaseEvent:
@@ -8,4 +10,5 @@ class BaseEvent:
 
     # Every event must override this method
     async def run(self, client):
-        raise NotImplementedError  # To be defined by every event
+        # To be defined by every event
+        raise NotImplementedError

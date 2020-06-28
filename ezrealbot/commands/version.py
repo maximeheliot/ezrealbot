@@ -1,7 +1,7 @@
 import discord
 import requests
 
-from ezrealbot.commands.base_command import BaseCommand
+from ezrealbot.commands import BaseCommand
 
 
 class Version(BaseCommand):
@@ -15,7 +15,7 @@ class Version(BaseCommand):
 ```
         **Example**
 
-        > **!help**
+        > **ez!help**
     """
 
     def __init__(self):

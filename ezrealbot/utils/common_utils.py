@@ -1,30 +1,30 @@
-from os.path import join
-from os import remove
+from os import remove, makedirs
+from os import path
 
 from discord import HTTPException
-from emoji import emojize
 
-import settings
+# Folders utilities
+base_folder = path.join(path.expanduser("~"), '.config', 'ezreal_bot')
+token_location = path.join(base_folder, 'discord_token.txt')
+
+if not path.exists(base_folder):
+    makedirs(base_folder)
 
 
-# Returns a path relative to the bot directory
-def get_rel_path(rel_path):
-    return join(settings.BASE_DIR, rel_path)
-
-
-# Returns an emoji as required to send it in a message
-# You can pass the emoji name with or without colons
-# If fail_silently is True, it will not raise an exception
-# if the emoji is not found, it will return the input instead
-def get_emoji(emoji_name, fail_silently=False):
-    alias = emoji_name if emoji_name[0] == emoji_name[-1] == ":" \
-            else f":{emoji_name}:"
-    the_emoji = emojize(alias, use_aliases=True)
-
-    if the_emoji == alias and not fail_silently:
-        raise ValueError(f"Emoji {alias} not found!")
-
-    return the_emoji
+# Discord token acquisition
+def get_discord_token():
+    try:
+        with open(token_location) as file:
+            discord_token = file.read()
+    except FileNotFoundError:
+        print(f'Discord token not found\n'
+              f'If you don’t have one, you can create it at https://discord.com/developers/applications\n'
+              f'It will be saved in clear text at {path.join(base_folder, "discord_token.txt")}\n'
+              f'Please input the bot’s Discord token:')
+        discord_token = input()
+        with open(token_location, 'w+') as file:
+            file.write(discord_token)
+    return discord_token
 
 
 # A shortcut to get a channel by a certain attribute
