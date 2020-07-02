@@ -1,8 +1,9 @@
 from os import listdir
 from os.path import dirname, basename
-from models.sqlite.sqlite_utils import initialize_sql
-
 # Automatically import every class inside the cogs package. Magic! :D
-from .Guild import Guild
+from .guild import Guild
+from .member import Member
+
+from ezrealbot.utils.sqlite_utils import initialize_sql
 
 initialize_sql()

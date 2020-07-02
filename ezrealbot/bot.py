@@ -10,6 +10,8 @@ from ezrealbot.utils import get_session
 
 # Set to remember if the bot is already running, since on_ready may be called
 # more than once on reconnects
+from models import Guild
+
 this = sys.modules[__name__]
 this.running = False
 
@@ -28,8 +30,12 @@ class EzrealBot(commands.Bot):
 
         self.remove_command('help')
         self.ezreal_session = get_session()
+
         from ezrealbot.cogs.base_cog import BaseCog
+        from ezrealbot.cogs.member_cog import MemberCog
+
         self.add_cog(BaseCog(self))
+        self.add_cog(MemberCog(self))
 
     def run(self, *args, **kwargs):
         super().run(self.discord_token, *args, **kwargs)
@@ -60,3 +66,16 @@ class EzrealBot(commands.Bot):
             n_ev += 1
         sched.start()
         print(f"{n_ev} events loaded", flush=True)
+
+        print("Check for guilds registration...")
+        registration = 0
+        for guild in self.guilds:
+            check_guild = self.ezreal_session.query(Guild).filter(Guild.discord_id == guild.id).one_or_none()
+            if not check_guild:
+                new_guild = Guild(discord_id=guild.id)
+                self.ezreal_session.add(new_guild)
+                self.ezreal_session.commit()
+                registration += 1
+
+        print(f'Servers registered: {len(self.guilds)}')
+        print(f'New server(s): {registration}')

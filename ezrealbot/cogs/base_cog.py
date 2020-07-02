@@ -1,9 +1,18 @@
+import asyncio
+from datetime import datetime
+from typing import Tuple
+
 import discord
 import requests
 from discord.ext import commands
 
 from ezrealbot import settings
 from ezrealbot import EzrealBot
+
+import ezreal.utils
+import ezreal.core.query as query
+
+from models import Guild, Member
 
 
 def get_command_name(cmd):
@@ -22,7 +31,7 @@ class BaseCog(commands.Cog, name='Base'):
         self._last_member = None
 
     @commands.command(description="Display a help message regarding the command you're looking for.")
-    async def help(self, ctx, *, command: str = ""):
+    async def help(self, ctx, command: str = ""):
         """
             **Search for the command and returns his documentation.**
 
@@ -89,3 +98,4 @@ class BaseCog(commands.Cog, name='Base'):
         embed = discord.Embed(title="**Ezreal Version " + r['tag_name'] + " **", color=0xff0000, description=r['body'])
 
         await ctx.send(embed=embed)
+

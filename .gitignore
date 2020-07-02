@@ -1,5 +1,4 @@
 .idea/
 *.pyc
-token
 dist/
 ezrealbot/ezrealbot.egg-info
