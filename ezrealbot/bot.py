@@ -1,11 +1,11 @@
 import sys
+from datetime import datetime
 
 import discord
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from discord.ext import commands
 
 from ezrealbot import settings
-from ezrealbot.events import BaseEvent
 from ezrealbot.utils import get_session
 
 # Set to remember if the bot is already running, since on_ready may be called
@@ -56,23 +56,12 @@ class EzrealBot(commands.Bot):
                 activity=discord.Game(name=settings.NOW_PLAYING))
         print(f'{self.user.name} logged in!', flush=True)
 
-        # Load all events
-        print("Loading events...", flush=True)
-        n_ev = 0
-        for ev in BaseEvent.__subclasses__():
-            event = ev()
-            sched.add_job(event.run, 'interval', (self,),
-                          minutes=event.interval_minutes)
-            n_ev += 1
-        sched.start()
-        print(f"{n_ev} events loaded", flush=True)
-
         print("Check for guilds registration...")
         registration = 0
         for guild in self.guilds:
             check_guild = self.ezreal_session.query(Guild).filter(Guild.discord_id == guild.id).one_or_none()
             if not check_guild:
-                new_guild = Guild(discord_id=guild.id)
+                new_guild = Guild(discord_id=guild.id, registration_date=datetime.now())
                 self.ezreal_session.add(new_guild)
                 self.ezreal_session.commit()
                 registration += 1

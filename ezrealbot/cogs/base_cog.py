@@ -1,6 +1,4 @@
-import asyncio
 from datetime import datetime
-from typing import Tuple
 
 import discord
 import requests
@@ -10,9 +8,8 @@ from ezrealbot import settings
 from ezrealbot import EzrealBot
 
 import ezreal.utils
-import ezreal.core.query as query
 
-from models import Guild, Member
+from models import Guild
 
 
 def get_command_name(cmd):
@@ -29,6 +26,33 @@ class BaseCog(commands.Cog, name='Base'):
         """
         self.bot = bot
         self._last_member = None
+
+    @commands.Cog.listener()
+    async def on_guild_join(self, guild):
+        """
+        Method catching event guild inviting the bot
+
+        :param guild: the new guild welcoming the bot
+        :return:
+        """
+        new_guild = Guild(discord_id=guild.id, registration_date=datetime.now())
+        print(f'New server joined: {guild.name}')
+        self.bot.ezreal_session.add(new_guild)
+        self.bot.ezreal_session.commit()
+
+    @commands.Cog.listener()
+    async def on_guild_remove(self, guild):
+        """
+        Method catching event guild removing the bot
+
+        :param guild: the guild removing the bot
+        :return:
+        """
+        old_guild = self.bot.ezreal_session.query(Guild) \
+            .filter(Guild.discord_id == guild.id).one()
+        print(f'Server leaved: {guild.name}#{old_guild.discord_id}')
+        self.bot.ezreal_session.delete(old_guild)
+        self.bot.ezreal_session.commit()
 
     @commands.command(description="Display a help message regarding the command you're looking for.")
     async def help(self, ctx, command: str = ""):

@@ -12,4 +12,5 @@ class Member(Base):
     region = Column(Integer)
     summoner_id = Column(String)
     guild_id = Column(Integer, ForeignKey('guilds.discord_id'), nullable=False)
+    guild = relationship("Guild", back_populates="members")
     registration_date = Column(DateTime)

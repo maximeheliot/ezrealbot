@@ -7,7 +7,7 @@ from discord.ext import commands
 from ezreal.core import query
 
 from ezrealbot import EzrealBot
-from models import Member
+from models import Member, Guild
 from discord.utils import get
 
 
@@ -18,6 +18,15 @@ class MemberCog(commands.Cog, name='Base'):
         """
         self.bot = bot
         self._last_member = None
+
+    # @commands.Cog.listener()
+    # async def on_member_remove(self, member):
+    #     if member.id != self.bot.id:
+    #         old_member = self.bot.ezreal_session.query(Member) \
+    #             .filter(Member.discord_id == member.id, Guild.discord_id == self.bot.guild.id).one_or_none()
+    #         if not old_member:
+    #             self.bot.ezreal_session.delete(old_member)
+    #             self.bot.ezreal_session.commit()
 
     @commands.command(description="Add a new user to the database, check the user to confirm his summoner's info.")
     async def register(self, ctx, region: str = '', *, pseudo: str = ''):
@@ -239,6 +248,6 @@ class MemberCog(commands.Cog, name='Base'):
         for member in members:
             user = get(ctx.guild.members, id=member.discord_id)
             summoner = query.read_summoner_info(id=member.summoner_id, region=member.region)
-            embed.add_field(name=user.name, value=f'{summoner.name}#{summoner.region}\t{summoner.rank}')
+            embed.add_field(name=user.name, value=f'{summoner.name}#{summoner.region}\t{summoner.rank}', inline=False)
 
         await ctx.send(embed=embed)
